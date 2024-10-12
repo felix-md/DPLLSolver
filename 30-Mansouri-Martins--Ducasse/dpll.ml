@@ -2,6 +2,7 @@
 
 open List
 
+
 (* fonctions utilitaires *)
 (* ----------------------------------------------------------- *)
 (* filter_map : ('a -> 'b option) -> 'a list -> 'b list
@@ -64,7 +65,8 @@ let simplifie l clauses =
               if mem l h then aux l t acc
               (* sinon on filtre la clause*)
               else aux l t ((f h)::acc)
-            in aux l clauses []
+
+  in aux l clauses []
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -94,6 +96,7 @@ let rec solveur_split clauses interpretation =
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
 let pur clauses =
+
   (* On applatit la list car cela rend plus simple le parcours *)
   let flat_clauses = List.flatten clauses in
   (* fonction auxiliaire qui prend en params la list des elements e et une list de retour r   *)
@@ -116,7 +119,6 @@ let pur clauses =
 
   
 
-
  
   
   (* unitaire : int list list -> int
@@ -132,10 +134,7 @@ let rec unitaire clauses =
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* à compléter *)
-  TODO : à compléter
-
-  None
-
+  Some []
 
 (* tests *)
 (* ----------------------------------------------------------- *)
