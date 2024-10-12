@@ -51,8 +51,19 @@ let coloriage = [
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
 let simplifie l clauses =
-  (* à compléter *)
-  []
+  (* on cré un alias f de notre fonction de filtre *)
+  (* la fonction de filtre parcours une clause en enlevant
+   les proposotion non(l) car elle sont forcement fausse *)
+  let f c = filter_map (fun x -> if x = -l then None else Some x) c in
+  (* on cré une fonction auxiliaire qui va parcourir les clauses recursivement *)
+  let rec aux l clauses acc = 
+    match clauses with
+    | []   -> acc
+    | h::t -> 
+              (* si l est dans la clause h alors on ne l'ajoute pas car elle est satisfaite *)
+              if mem l h then aux l t acc
+              (* sinon on filtre la clause*)
+              else aux l t ((f h)::acc)
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -83,19 +94,25 @@ let rec solveur_split clauses interpretation =
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
 let pur clauses =
   (* à compléter *)
+  TODO : à compléter
   0
-
-(* unitaire : int list list -> int
-    - si `clauses' contient au moins une clause unitaire, retourne
-      le littéral de cette clause unitaire ;
-    - sinon, lève une exception `Not_found' *)
-let unitaire clauses =
-  (* à compléter *)
-  0
+ 
+  
+  (* unitaire : int list list -> int
+  - si `clauses' contient au moins une clause unitaire, retourne
+  le littéral de cette clause unitaire ;
+  - sinon, lève une exception `Not_found' *)
+let rec unitaire clauses =
+  match clauses with
+  | []   -> failwith "pas de littéral pur"
+  (* Si une clause est de taille 1, alors elle est unitaire *)
+  | h::t -> if length h = 1 then hd h else unitaire t
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* à compléter *)
+  TODO : à compléter
+
   None
 
 
