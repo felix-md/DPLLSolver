@@ -64,6 +64,7 @@ let simplifie l clauses =
               if mem l h then aux l t acc
               (* sinon on filtre la clause*)
               else aux l t ((f h)::acc)
+            in aux l clauses []
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -93,8 +94,28 @@ let rec solveur_split clauses interpretation =
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
 let pur clauses =
-  (* à compléter *)
-  TODO : à compléter
+  (* On applatit la list car cela rend plus simple le parcours *)
+  let flat_clauses = List.flatten clauses in
+  (* fonction auxiliaire qui prend en params la list des elements e et une list de retour r   *)
+  let rec aux e r  =
+    (* Si e est une list vide on retourne r sinon on prend la tete de la list et la queue  *)
+    match e with
+    | [] -> r
+    | h::t -> 
+        (* Si le littéral est dans la liste des clauses déja pur ou son opposé est dans la liste des clauses on continue sinon on l'ajoute à la liste de retour *)
+        if List.mem (-h) flat_clauses || List.mem h r  then 
+          aux t r  
+        else 
+          aux t (h::r)
+  in 
+  (* On retourne le resultat de la fonction auxiliaire *)
+  let result = aux flat_clauses []  in
+  (* Si le resultat est vide on leve une exception sinon on retourne le resultat *)
+  if result = [] then failwith "pas de littéral pur"
+  else result
+
+  
+
 
  
   
