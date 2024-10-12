@@ -122,8 +122,31 @@ let rec unitaire clauses =
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
-  (* à compléter *)
-  Some []
+  (* l'ensemble vide de clauses est satisfiable *)
+  if clauses = [] then Some interpretation else
+  (* la clause vide n'est jamais satisfiable *)
+  if mem [] clauses then None else
+  (* unitaire *)
+  try
+    let u = unitaire clauses in 
+    solveur_dpll_rec (simplifie u clauses) (u::interpretation)
+  with _ ->
+    (* pur *)
+    try
+      let p = pur clauses in 
+      solveur_dpll_rec (simplifie p clauses) (p::interpretation)
+    with _ ->
+      (* branchement *)
+      let l = hd (hd clauses) in
+      let branche = solveur_dpll_rec (simplifie l clauses) (l::interpretation) in
+      match branche with
+      | None -> solveur_dpll_rec (simplifie (-l) clauses) ((-l)::interpretation)
+      | _    -> branche
+
+  
+
+    
+  
 
 (* tests *)
 (* ----------------------------------------------------------- *)
