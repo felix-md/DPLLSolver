@@ -95,7 +95,7 @@ let rec solveur_split clauses interpretation =
 let pur clauses =
   (* à compléter *)
   TODO : à compléter
-  0
+
  
   
   (* unitaire : int list list -> int
@@ -104,7 +104,7 @@ let pur clauses =
   - sinon, lève une exception `Not_found' *)
 let rec unitaire clauses =
   match clauses with
-  | []   -> failwith "pas de littéral pur"
+  | []   -> failwith "Not_found"
   (* Si une clause est de taille 1, alors elle est unitaire *)
   | h::t -> if length h = 1 then hd h else unitaire t
 
