@@ -96,26 +96,15 @@ let rec solveur_split clauses interpretation =
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
 let pur clauses =
-
-  (* On applatit la list car cela rend plus simple le parcours *)
+  (* On applatit la list de list en list*)
   let flat_clauses = List.flatten clauses in
-  (* fonction auxiliaire qui prend en params la list des elements e et une list de retour r   *)
-  let rec aux e r  =
-    (* Si e est une list vide on retourne r sinon on prend la tete de la list et la queue  *)
-    match e with
-    | [] -> r
-    | h::t -> 
-        (* Si le littéral est dans la liste des clauses déja pur ou son opposé est dans la liste des clauses on continue sinon on l'ajoute à la liste de retour *)
-        if List.mem (-h) flat_clauses || List.mem h r  then 
-          aux t r  
-        else 
-          aux t (h::r)
-  in 
-  (* On retourne le resultat de la fonction auxiliaire *)
-  let result = aux flat_clauses []  in
-  (* Si le resultat est vide on leve une exception sinon on retourne le resultat *)
-  if result = [] then failwith "pas de littéral pur"
-  else result
+  (* Fonction auxiliare qui permet de parcourir les element de flat_clauses *)
+  let rec aux = function
+    (* Si on a parcouru tout les elements de flat_clauses alors on lève une exception *)
+    | [] -> failwith "pas de littéral pur"
+    (* Sinon on regarde si l'element courant est dans flat_clauses et si son opposé est dans flat_clauses *)
+    | h::t -> if mem (-h) flat_clauses then aux t else h
+  in aux flat_clauses
 
   
 
