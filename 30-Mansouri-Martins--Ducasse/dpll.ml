@@ -97,7 +97,7 @@ let rec solveur_split clauses interpretation =
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
 let pur clauses =
   (* On applatit la list de list en list*)
-  let flat_clauses = List.flatten clauses in
+  let flat_clauses = flatten clauses in
   (* Fonction auxiliare qui permet de parcourir les element de flat_clauses *)
   let rec aux = function
     (* Si on a parcouru tout les elements de flat_clauses alors on lève une exception *)
@@ -126,21 +126,30 @@ let rec solveur_dpll_rec clauses interpretation =
   if clauses = [] then Some interpretation else
   (* la clause vide n'est jamais satisfiable *)
   if mem [] clauses then None else
-  (* unitaire *)
+  (* on cherche une clause unitaire *)
   try
+
     let u = unitaire clauses in 
+    (* si il y en a une on la met a vraie dans notre interpretation
+    et on simplifie notre ensemble de clauses *)
     solveur_dpll_rec (simplifie u clauses) (u::interpretation)
   with _ ->
-    (* pur *)
+    (* Si il n'y a pas de clause unitaire, on cherche une variable pur *)
     try
       let p = pur clauses in 
+      (* Si il y en a une on la met a vraie dans notre interpretation
+      et on simplifie notre ensemble de clauses *)
       solveur_dpll_rec (simplifie p clauses) (p::interpretation)
     with _ ->
-      (* branchement *)
+      (* Si il n'y a ni clause unitaire ni variable pur *)
+      (* On prend la première variable de la liste *)
       let l = hd (hd clauses) in
+      (* On la satisfait dans notre interpretation *)
       let branche = solveur_dpll_rec (simplifie l clauses) (l::interpretation) in
       match branche with
+      (* Si la branche est insatisfiable, on satisfait son opposé *)
       | None -> solveur_dpll_rec (simplifie (-l) clauses) ((-l)::interpretation)
+      (* Sinon on retourne la branche *)
       | _    -> branche
 
   
