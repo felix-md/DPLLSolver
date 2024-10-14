@@ -10,9 +10,9 @@ Date limite: le vendredi 25 octobre 2024 à 19:00
 
 Identité
 --------
-Nombre de binôme: **à remplir**
-Nom, prénom 1: **à remplir**
-Nom, prénom 2: **à remplir**
+Nombre de binôme: **30**
+Nom, prénom 1: **Martins--Ducasse Félix**
+Nom, prénom 2: **Mansouri Yanis**
 
 
 Questions sur votre code
@@ -21,7 +21,7 @@ Questions sur votre code
    et que ensuite `./dpll sudoku-4x4.cnf` donne la réponse attendue (voir
    fichier README) ?
 
-**à remplir**
+**Make DPLL s'ecéxute sans erreurs ou warnings. ./dpll sudoku-4x4.cnf donne la réponse attendue.**
 
 ---
 
@@ -32,7 +32,11 @@ Questions sur votre code
    - Si non, expliquez en quelques phrases en français comment
      fonctionne votre implémentation de `simplifie`.
 
-**à remplir**
+**Oui nous avons utilisé la fonction filter_map.
+La fonction simplifie se fait en plusieurs étapes :
+1 - On parcours récursivement les clauses
+2 - Si on a fini, on renvoie notre accumulateur
+3 - Sinon, si notre littéral est dans la clause, alors on n'ajoute pas cette clause a l'accumulateur. Sinon on filtre la clause en enlevant les négation du littéral si il y en a, puis on l'ajoute a l'accumulateur.**
 
 ---
 
@@ -45,7 +49,8 @@ Questions sur votre code
    comment ces fonctions auxiliaires sont utilisées dans votre
    implémentation de la fonction `unitaire`.
 
-**à remplir**
+**Pour notre implémentation de unitaire nous avons utiliser les fonctions length et hd du module List. En effet une clause unitaire est une clause contenant 1 littéral. On peut donc savoir si la clause est unitaire on regardant sa taille, si elle est égale a 1 on a juste a prendre sa tête. Nous avons choisi d'utiliser le type option, pour de meilleures performances et un code plus élégant.**
+
 
 ---
 
@@ -54,7 +59,7 @@ Questions sur votre code
    quelques phrases en français comment ces fonctions auxiliaires sont
    utilisées dans votre implémentation de la fonction `pur`.
 
-**à remplir**
+**Pour notre implémentation de  pur nous avons utiliser les fonctions flatten et sort_uniq du module List ainsi que la fonction compare du module Int. En utilisant flatten, le parcours de tous les littéraux est plus simple. En retirant les doublons avec sort_uniq, ainsi qu'avec compare comme fonction de comparaison, le coût de la recherche de littéral pur est plus faible car la liste a parcourir est plus courte. Nous avons choisi d'utiliser le type option, pour de meilleures performances et un code plus élégant.**
 
 ---
 
@@ -62,13 +67,20 @@ Questions sur votre code
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
-**à remplir**
+**Le fichier exemple-5-8.cnf ne donne pas le même résultat entre les deux fonction.
+En effet solveur_split renvoie :
+SAT
+1 2 3 -4 6 8 9 0
+et solveur_dpll_rec renvoie :
+SAT
+1 2 3 -4 -7 0
+Cette différence s'explique par le choix des littéraux a simplifier, en effet le solveur_split va simplement prendre le premier littéral de la formule tandis que le solveur_dpll_rec va d'abord chercher les clauses unitaire, puis pur avant de mimer le comportement de solveur_split. Ainsi les interprétations trouvées peuvent différées.**
 
 ---
 
 5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
 
-**à remplir**
+**Notre programme est relativement optimisé si on se cantonne a l'utilisation de list classique Ocaml. En effet l'utilisation de HashMap permettrai des performance plus élevé grâce un temps d'accès moindre pour chercher les littéraux purs.**
 
 ---
 

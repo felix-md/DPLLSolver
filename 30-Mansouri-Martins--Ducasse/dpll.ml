@@ -52,6 +52,7 @@ let coloriage = [
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
 let simplifie l clauses =
+  
   (* on cré un alias f de notre fonction de filtre *)
   (* la fonction de filtre parcours une clause en enlevant
    les proposotion non(l) car elle sont forcement fausse *)
@@ -59,14 +60,16 @@ let simplifie l clauses =
   (* on cré une fonction auxiliaire qui va parcourir les clauses recursivement *)
   let rec aux l clauses acc = 
     match clauses with
+    (* Quand on a fini, on renvoie notre accumulateur *)
     | []   -> acc
     | h::t -> 
               (* si l est dans la clause h alors on ne l'ajoute pas car elle est satisfaite *)
               if mem l h then aux l t acc
-              (* sinon on filtre la clause*)
+              (* sinon on filtre la clause *)
               else aux l t ((f h)::acc)
 
   in aux l clauses []
+  
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -91,34 +94,33 @@ let rec solveur_split clauses interpretation =
 (* solveur dpll récursif *)
 (* ----------------------------------------------------------- *)
 
-(* pur : int list list -> int
+(* pur : int list list -> int option
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
-    - sinon, lève une exception `Failure "pas de littéral pur"' *)
+    - sinon, renvoie None *)
 let pur clauses =
-  (* On applatit la list de list en list*)
-  let flat_clauses = flatten clauses in
-  (* Fonction auxiliare qui permet de parcourir les element de flat_clauses *)
-  let rec aux = function
-    (* Si on a parcouru tout les elements de flat_clauses alors on lève une exception *)
-    | [] -> failwith "pas de littéral pur"
-    (* Sinon on regarde si l'element courant est dans flat_clauses et si son opposé est dans flat_clauses *)
-    | h::t -> if mem (-h) flat_clauses then aux t else h
-  in aux flat_clauses
+  (* On applatit la list de list en list *)
+  (* On trie la liste et on enleve les doublons *)
+  let uniq_flatten =List.sort_uniq Int.compare (flatten clauses) in
+  (* Fonction auxiliare qui permet de parcourir les éléments de uniq_flatten *)
+  let rec aux  = function
+    (* Si on a parcouru tout les elements de uniq_flatten alors on renvoie None *)
+    | [] -> None
+    (* Sinon on regarde si la négation du littéral qu'on traite est présente dans uniq_flatten *)
+    | h::t -> if mem (-h) uniq_flatten then aux t else Some h
+  in aux uniq_flatten
 
-  
 
- 
-  
-  (* unitaire : int list list -> int
-  - si `clauses' contient au moins une clause unitaire, retourne
-  le littéral de cette clause unitaire ;
-  - sinon, lève une exception `Not_found' *)
+
+(* unitaire : int list list -> int option
+- si `clauses' contient au moins une clause unitaire, retourne
+le littéral de cette clause unitaire ;
+- sinon, renvoie None *)
 let rec unitaire clauses =
   match clauses with
-  | []   -> failwith "Not_found"
+  | []   -> None
   (* Si une clause est de taille 1, alors elle est unitaire *)
-  | h::t -> if length h = 1 then hd h else unitaire t
+  | h::t -> if length h = 1 then Some (hd h) else unitaire t
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
@@ -127,35 +129,27 @@ let rec solveur_dpll_rec clauses interpretation =
   (* la clause vide n'est jamais satisfiable *)
   if mem [] clauses then None else
   (* on cherche une clause unitaire *)
-  try
-
-    let u = unitaire clauses in 
-    (* si il y en a une on la met a vraie dans notre interpretation
-    et on simplifie notre ensemble de clauses *)
-    solveur_dpll_rec (simplifie u clauses) (u::interpretation)
-  with _ ->
-    (* Si il n'y a pas de clause unitaire, on cherche une variable pur *)
-    try
+  let u = unitaire clauses in 
+  match u with
+    (* Si il y en a une on la met a vraie dans notre interpretation*)
+    | Some lit -> solveur_dpll_rec (simplifie lit clauses) (lit::interpretation)
+    | None ->
+      (* Si il n'y a pas de clause unitaire, on cherche une variable pur *)
       let p = pur clauses in 
-      (* Si il y en a une on la met a vraie dans notre interpretation
-      et on simplifie notre ensemble de clauses *)
-      solveur_dpll_rec (simplifie p clauses) (p::interpretation)
-    with _ ->
-      (* Si il n'y a ni clause unitaire ni variable pur *)
-      (* On prend la première variable de la liste *)
-      let l = hd (hd clauses) in
-      (* On la satisfait dans notre interpretation *)
-      let branche = solveur_dpll_rec (simplifie l clauses) (l::interpretation) in
-      match branche with
-      (* Si la branche est insatisfiable, on satisfait son opposé *)
-      | None -> solveur_dpll_rec (simplifie (-l) clauses) ((-l)::interpretation)
-      (* Sinon on retourne la branche *)
-      | _    -> branche
-
-  
-
-    
-  
+      (* Si il y en a une on la met a vraie dans notre interpretation*)
+      match p with 
+      | Some lit -> solveur_dpll_rec (simplifie lit clauses) (lit::interpretation)
+      | None -> 
+          (* Si il n'y a ni clause unitaire ni variable pur *)
+          (* On prend la première variable de la liste *)
+          let l = hd (hd clauses) in
+          (* On la satisfait dans notre interpretation *)
+          let branche = solveur_dpll_rec (simplifie l clauses) (l::interpretation) in
+          match branche with
+            (* Si la branche est insatisfiable, on satisfait son opposé *)
+            | None -> solveur_dpll_rec (simplifie (-l) clauses) ((-l)::interpretation)
+            (* Sinon on retourne la branche *)
+            | _    -> branche
 
 (* tests *)
 (* ----------------------------------------------------------- *)
@@ -164,4 +158,5 @@ let rec solveur_dpll_rec clauses interpretation =
 
 let () =
   let clauses = Dimacs.parse Sys.argv.(1) in
-  print_modele (solveur_dpll_rec clauses [])
+  print_modele (solveur_dpll_rec clauses []);
+  
