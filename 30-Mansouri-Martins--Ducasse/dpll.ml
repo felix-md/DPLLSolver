@@ -60,16 +60,19 @@ let simplifie l clauses =
   (* on cré une fonction auxiliaire qui va parcourir les clauses recursivement *)
   let rec aux l clauses acc = 
     match clauses with
-    (* Quand on a fini, on renvoie notre accumulateur *)
-    | []   -> acc
+    (* Quand on a fini, on renvoie notre accumulateur dans le bon sens *)
+    | []   -> List.rev acc
     | h::t -> 
               (* si l est dans la clause h alors on ne l'ajoute pas car elle est satisfaite *)
               if mem l h then aux l t acc
+              else
               (* sinon on filtre la clause *)
-              else aux l t ((f h)::acc)
+              let h_simplified = f h in 
+              if h_simplified = [] then [[]] else aux l t (h_simplified::acc)
+             
 
   in aux l clauses []
-  
+
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -119,15 +122,16 @@ le littéral de cette clause unitaire ;
 let rec unitaire clauses =
   match clauses with
   | []   -> None
+  | [x]::t -> Some x
   (* Si une clause est de taille 1, alors elle est unitaire *)
-  | h::t -> if length h = 1 then Some (hd h) else unitaire t
+  | _::t ->  unitaire t
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* l'ensemble vide de clauses est satisfiable *)
   if clauses = [] then Some interpretation else
   (* la clause vide n'est jamais satisfiable *)
-  if mem [] clauses then None else
+  if clauses = [[]] then None else
   (* on cherche une clause unitaire *)
   let u = unitaire clauses in 
   match u with
@@ -142,7 +146,8 @@ let rec solveur_dpll_rec clauses interpretation =
       | None -> 
           (* Si il n'y a ni clause unitaire ni variable pur *)
           (* On prend la première variable de la liste *)
-          let l = hd (hd clauses) in
+          let l = hd ( hd clauses) in
+          
           (* On la satisfait dans notre interpretation *)
           let branche = solveur_dpll_rec (simplifie l clauses) (l::interpretation) in
           match branche with
