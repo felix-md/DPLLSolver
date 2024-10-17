@@ -58,6 +58,7 @@ let simplifie l clauses =
   let f c = filter_map (fun x -> if x = -l then None else Some x) c in
   (* on cré une fonction auxiliaire qui va parcourir les clauses recursivement *)
   let rec aux l clauses acc = 
+    
     match clauses with
     (* Quand on a fini, on renvoie notre accumulateur dans le bon sens *)
     | []   -> List.rev acc
@@ -66,12 +67,13 @@ let simplifie l clauses =
               if mem l h then aux l t acc
               else
               (* sinon on filtre la clause *)
-              let h_simplified = f h in 
+              let h_simplified = f  h in 
               (* si la clause est vide, alors on renvoie une liste vide ce qui optimise l'algorithme *)
               if h_simplified = [] then [[]] else aux l t (h_simplified::acc)
              
 
   in aux l clauses []
+
 
 
 (* solveur_split : int list list -> int list -> int list option
@@ -106,12 +108,12 @@ let pur clauses =
   (* On trie la liste et on enleve les doublons *)
   let uniq_flatten = List.sort_uniq Int.compare (flatten clauses) in
   (* Fonction auxiliare qui permet de parcourir les éléments de uniq_flatten *)
-  let rec aux  = function
+  let rec aux acc = function
     (* Si on a parcouru tout les elements de uniq_flatten alors on renvoie None *)
     | [] -> None
     (* Sinon on regarde si la négation du littéral qu'on traite est présente dans uniq_flatten *)
-    | h::t -> if mem (-h) uniq_flatten then aux t else Some h
-  in aux uniq_flatten
+    | h::t -> if mem h acc then aux acc t else if mem (-h) uniq_flatten then aux (h::-h::acc) t else Some h
+  in aux uniq_flatten []
 
 
 
@@ -160,7 +162,8 @@ let rec solveur_dpll_rec clauses interpretation =
 (* let () = print_modele (solveur_dpll_rec systeme []) *)
 (* let () = print_modele (solveur_dpll_rec coloriage []) *)
 
+
 let () =
   let clauses = Dimacs.parse Sys.argv.(1) in
-  print_modele (solveur_dpll_rec clauses []);
+  print_modele ((solveur_dpll_rec clauses) []);
   
