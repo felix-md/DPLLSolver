@@ -52,7 +52,6 @@ let coloriage = [
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
 let simplifie l clauses =
-  
   (* on cré un alias f de notre fonction de filtre *)
   (* la fonction de filtre parcours une clause en enlevant
    les proposotion non(l) car elle sont forcement fausse *)
@@ -105,7 +104,7 @@ let rec solveur_split clauses interpretation =
 let pur clauses =
   (* On applatit la list de list en list *)
   (* On trie la liste et on enleve les doublons *)
-  let uniq_flatten =List.sort_uniq Int.compare (flatten clauses) in
+  let uniq_flatten = List.sort_uniq Int.compare (flatten clauses) in
   (* Fonction auxiliare qui permet de parcourir les éléments de uniq_flatten *)
   let rec aux  = function
     (* Si on a parcouru tout les elements de uniq_flatten alors on renvoie None *)
@@ -125,7 +124,6 @@ let rec unitaire clauses =
   | []   -> None
   (* Si une clause est de taille 1, alors elle est unitaire *)
   | [x]::t -> Some x
-  
   | _::t ->  unitaire t
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
@@ -149,7 +147,6 @@ let rec solveur_dpll_rec clauses interpretation =
           (* Si il n'y a ni clause unitaire ni variable pur *)
           (* On prend la première variable de la liste *)
           let l = hd ( hd clauses) in
-          
           (* On la satisfait dans notre interpretation *)
           let branche = solveur_dpll_rec (simplifie l clauses) (l::interpretation) in
           match branche with
