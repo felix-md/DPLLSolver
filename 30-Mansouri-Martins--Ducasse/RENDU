@@ -49,7 +49,7 @@ La fonction simplifie se fait en plusieurs étapes :
    comment ces fonctions auxiliaires sont utilisées dans votre
    implémentation de la fonction `unitaire`.
 
-**Pour notre implémentation de unitaire nous avons utiliser les fonctions length et hd du module List. En effet une clause unitaire est une clause contenant 1 littéral. On peut donc savoir si la clause est unitaire on regardant sa taille, si elle est égale a 1 on a juste a prendre sa tête. Nous avons choisi d'utiliser le type option, pour de meilleures performances et un code plus élégant.**
+**Pour notre implémentation de unitaire nous n'avons pas eu besoin de définir des fonctions auxiliaires ni d'utiliser des fonctions d'une bibliothèque. Un simple parcours avec un pattern matching suffit**
 
 
 ---

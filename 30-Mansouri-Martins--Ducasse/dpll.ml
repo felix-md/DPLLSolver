@@ -68,6 +68,7 @@ let simplifie l clauses =
               else
               (* sinon on filtre la clause *)
               let h_simplified = f h in 
+              (* si la clause est vide, alors on renvoie une liste vide ce qui optimise l'algorithme *)
               if h_simplified = [] then [[]] else aux l t (h_simplified::acc)
              
 
@@ -122,8 +123,9 @@ le littéral de cette clause unitaire ;
 let rec unitaire clauses =
   match clauses with
   | []   -> None
-  | [x]::t -> Some x
   (* Si une clause est de taille 1, alors elle est unitaire *)
+  | [x]::t -> Some x
+  
   | _::t ->  unitaire t
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
