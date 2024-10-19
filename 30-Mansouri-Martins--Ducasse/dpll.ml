@@ -109,20 +109,16 @@ let rec solveur_split clauses interpretation =
 let pur clauses =
   (* On applatit la list de list en list *)
   (* On trie la liste et on enleve les doublons *)
-  let uniq_flatten = List.sort_uniq Int.compare (flatten clauses) in
+  let uniq_flatten = List.sort_uniq Int.compare(flatten clauses) in
   (* Fonction auxiliare qui permet de parcourir les éléments de uniq_flatten *)
   let rec aux  = function
     (* Si on a parcouru tout les elements de uniq_flatten alors on renvoie None, on a pas trouvé de littéral pur *)
     | [] -> None
-    
-    | h::t -> (* si le littéral a déjà été parcouru, on passe au littéral suivant*)
-             
-              (* sinon on cherche sa négation, si elle est présente on ajoute ce littéral et sa négation
-              aux littéraux  déjà parcouru *)
-               if List.mem (-(h)) uniq_flatten then aux  t 
+    | h::t -> (* on cherche la négation du litéral dans notre liste de littéral *)
+               if List.mem (-(h)) uniq_flatten then aux t 
               (* sinon on renvoie le littéral car il est pur *)
               else Some h
-  in aux uniq_flatten 
+  in aux uniq_flatten  
 
 
 
@@ -175,6 +171,6 @@ let rec solveur_dpll_rec clauses interpretation =
 
 
 let () =
-  let clauses = Dimacs.parse Sys.argv.(1) in
-  print_modele ((solveur_dpll_rec clauses) []);
+  let clauses = Dimacs.parse Sys.argv.(1) in 
+  print_modele (solveur_dpll_rec clauses [])
   
