@@ -80,7 +80,8 @@ Cette différence s'explique par le choix des littéraux a simplifier, en effet 
 
 5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
 
-**Notre programme est relativement optimisé si on se cantonne a l'utilisation de list classique Ocaml. En effet l'utilisation de HashMap permettrai des performance plus élevé grâce un temps d'accès moindre pour chercher les littéraux purs.**
+**Notre programme est relativement optimisé si on se cantonne a l'utilisation de list classique Ocaml. En effet l'utilisation de HashMap permettrai des performance plus élevé grâce un temps d'accès moindre pour chercher les littéraux purs.
+Tous les fichiers cnf SAT donnés se finissent en moins de 40 secondes tous cumulés sur nos machines**
 
 ---
 
