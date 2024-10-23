@@ -15,11 +15,6 @@ fi
 # Boucle sur tous les fichiers dans le répertoire SAT
 for file in ./SAT/*; do
   if [ -f "$file" ]; then
-   # Exclure le fichier ii8a2.cnf
-    if [ "$(basename "$file")" = "ii8a2.cnf" ]; then
-      echo "Skipping file: $file"
-      continue
-    fi
     
     echo "Traitement du fichier: $file"
     ./dpll "$file"
