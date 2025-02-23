@@ -1,8 +1,8 @@
 #!/bin/bash
-# Ã  utiliser sur un fichier modÃ¨le retournÃ© par glucose ou minisat
+
 printf "+---+---+---+\n|"
 
-i=1 # numÃ©ro d'entrÃ©e courante
+i=1
 for n in `grep -v 'SAT' $1 | sed -e 's/-[0-9]* //g;s/ 0//g;s/[1-9][1-9]\([1-9]\)/\1/g' | sort`
 do
     printf "$n"

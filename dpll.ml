@@ -2,7 +2,6 @@
 
 open List
 
-
 (* fonctions utilitaires *)
 (* ----------------------------------------------------------- *)
 (* filter_map : ('a -> 'b option) -> 'a list -> 'b list
@@ -110,15 +109,28 @@ let pur clauses =
   (* On applatit la list de list en list *)
   (* On trie la liste et on enleve les doublons *)
   let uniq_flatten = List.sort_uniq Int.compare(flatten clauses) in
-  (* Fonction auxiliare qui permet de parcourir les éléments de uniq_flatten *)
-  let rec aux  = function
-    (* Si on a parcouru tout les elements de uniq_flatten alors on renvoie None, on a pas trouvé de littéral pur *)
-    | [] -> None
-    | h::t -> (* on cherche la négation du litéral dans notre liste de littéral *)
-               if List.mem (-(h)) uniq_flatten then aux t 
-              (* sinon on renvoie le littéral car il est pur *)
-              else Some h
-  in aux uniq_flatten  
+  let uniq_flatten = Array.of_list uniq_flatten in
+  let len = Array.length uniq_flatten in
+  (* On cherche un littéral pur *)
+  
+  let rec find_pure i =
+    if i >= len then None
+    else
+      let lit = uniq_flatten.(i) in
+      let neg_lit = -lit in
+      let rec dicho_search low high =
+        if low > high then None
+        else
+          let mid = (low + high) / 2 in
+          if uniq_flatten.(mid) = neg_lit then Some neg_lit
+          else if uniq_flatten.(mid) < neg_lit then dicho_search (mid + 1) high
+          else dicho_search low (mid - 1)
+      in
+      match dicho_search 0 (len - 1) with
+      | None -> Some lit
+      | Some _ -> find_pure (i + 1)
+  in
+  find_pure 0
 
 
 
